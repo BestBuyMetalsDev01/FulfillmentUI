@@ -1,9 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import {
-    Search, Sliders, Menu, ChevronDown, ChevronUp, X, Bell, User, LayoutGrid, Ship, Box, Eye, CheckCircle, Clock,
-    Truck, ClipboardCheck, ScrollText, Users, Home, Warehouse, ArrowRightLeft, Package, Archive, RefreshCcw, Download, CheckSquare,
-    Sun, Moon, Car, ListTodo // New icons for dark mode toggle, trip, and list
+    createReactComponent, // Import createReactComponent
+    icons // Import the entire icons object
 } from 'lucide-react';
+
+// Dynamically create icon components to bypass potential bundling issues
+const getIconComponent = (iconName) => {
+    const IconComponent = icons[iconName];
+    if (!IconComponent) {
+        console.warn(`Icon "${iconName}" not found in lucide-react.`);
+        return null; // Or a fallback icon
+    }
+    // createReactComponent is typically used internally or for advanced cases,
+    // but here we're using it to ensure the icon is a valid React component.
+    // However, the standard way is just to use <IconComponent /> directly.
+    // The error suggests the imported 'IconComponent' itself is the issue.
+    // Let's try to ensure it's rendered as a direct component.
+    // If the error persists, it might mean the 'icons' object itself
+    // isn't correctly populated with React components during build.
+    // For now, we'll stick to direct component usage, assuming the re-install
+    // and this specific error context points to a deeper bundling problem that
+    // this import strategy might address.
+    return IconComponent;
+};
+
 
 // Mock data to simulate orders with trip IDs
 const mockOrders = [
@@ -302,12 +322,31 @@ const OrderListScreen = ({ onBackToDashboard, initialFilter = 'All', toggleDarkM
         alert(`Opening details for Order ${orderId}. (This is a mock action)`);
     };
 
+    const HomeIcon = getIconComponent('Home');
+    const SearchIcon = getIconComponent('Search');
+    const SlidersIcon = getIconComponent('Sliders');
+    const SunIcon = getIconComponent('Sun');
+    const MoonIcon = getIconComponent('Moon');
+    const MenuIcon = getIconComponent('Menu');
+    const XIcon = getIconComponent('X');
+    const LayoutGridIcon = getIconComponent('LayoutGrid');
+    const BellIcon = getIconComponent('Bell');
+    const UserIcon = getIconComponent('User');
+    const ClockIcon = getIconComponent('Clock');
+    const ChevronUpIcon = getIconComponent('ChevronUp');
+    const ChevronDownIcon = getIconComponent('ChevronDown');
+    const EyeIcon = getIconComponent('Eye');
+    const CheckCircleIcon = getIconComponent('CheckCircle');
+    const ShipIcon = getIconComponent('Ship'); // Declared here
+    const BoxIcon = getIconComponent('Box');   // Declared here
+
+
     return (
         <div className="min-h-screen bg-gray-100 dark:bg-gray-900 font-sans flex flex-col antialiased text-gray-800 dark:text-gray-200">
             {/* Header for Order List Screen */}
             <header className="bg-white dark:bg-gray-800 shadow-md p-4 flex items-center justify-between sticky top-0 z-20">
                 <button onClick={onBackToDashboard} className="text-gray-600 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md p-1 transition-transform duration-200 active:scale-95">
-                    <Home size={24} /> {/* Home icon to go back to dashboard */}
+                    {HomeIcon && <HomeIcon size={24} />} {/* Home icon to go back to dashboard */}
                 </button>
                 <div className="flex-1 mx-3 relative">
                     <input
@@ -317,17 +356,17 @@ const OrderListScreen = ({ onBackToDashboard, initialFilter = 'All', toggleDarkM
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
-                    <Search size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
+                    {SearchIcon && <SearchIcon size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />}
                 </div>
                 <button onClick={toggleFilterModal} className="text-gray-600 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md p-1 transition-transform duration-200 active:scale-95">
-                    <Sliders size={24} />
+                    {SlidersIcon && <SlidersIcon size={24} />}
                 </button>
                 {/* Dark Mode Toggle */}
                 <button
                     onClick={toggleDarkMode}
                     className="ml-2 text-gray-600 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md p-1 transition-transform duration-200 active:scale-95"
                 >
-                    {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
+                    {isDarkMode ? (SunIcon && <SunIcon size={24} />) : (MoonIcon && <MoonIcon size={24} />)}
                 </button>
             </header>
 
@@ -337,18 +376,18 @@ const OrderListScreen = ({ onBackToDashboard, initialFilter = 'All', toggleDarkM
                 <div className="p-4 flex items-center justify-between border-b border-gray-200 dark:border-gray-700">
                     <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Menu</h2>
                     <button onClick={toggleSidebar} className="text-gray-600 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md p-1 transition-transform duration-200 active:scale-95">
-                        <X size={24} />
+                        {XIcon && <XIcon size={24} />}
                     </button>
                 </div>
                 <nav className="flex flex-col p-4 space-y-2">
                     <a href="#" className="flex items-center p-3 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400 rounded-md transition-colors duration-200">
-                        <LayoutGrid size={20} className="mr-3" /> Fulfilment Dashboard
+                        {LayoutGridIcon && <LayoutGridIcon size={20} className="mr-3" />} Fulfilment Dashboard
                     </a>
                     <a href="#" className="flex items-center p-3 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400 rounded-md transition-colors duration-200">
-                        <Bell size={20} className="mr-3" /> Notifications
+                        {BellIcon && <BellIcon size={20} className="mr-3" />} Notifications
                     </a>
                     <a href="#" className="flex items-center p-3 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400 rounded-md transition-colors duration-200">
-                        <User size={20} className="mr-3" /> Profile
+                        {UserIcon && <UserIcon size={20} className="mr-3" />} Profile
                     </a>
                     {/* Add more navigation items here */}
                 </nav>
@@ -361,7 +400,7 @@ const OrderListScreen = ({ onBackToDashboard, initialFilter = 'All', toggleDarkM
                         <div className="flex justify-between items-center mb-6">
                             <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200">Filters & Sort</h3>
                             <button onClick={toggleFilterModal} className="text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md p-1 transition-transform duration-200 active:scale-95">
-                                <X size={24} />
+                                {XIcon && <XIcon size={24} />}
                             </button>
                         </div>
 
@@ -415,14 +454,14 @@ const OrderListScreen = ({ onBackToDashboard, initialFilter = 'All', toggleDarkM
                 {/* Priority Orders Section (If filtered) */}
                 {selectedFilters.show === 'Priority' && (
                     <div className="bg-yellow-50 dark:bg-yellow-900 border border-yellow-200 dark:border-yellow-700 text-yellow-800 dark:text-yellow-200 p-3 rounded-md mb-4 flex items-center">
-                        <Clock size={20} className="mr-2 text-yellow-600 dark:text-yellow-400" />
+                        {ClockIcon && <ClockIcon size={20} className="mr-2 text-yellow-600 dark:text-yellow-400" />}
                         <span className="font-medium">Showing Priority Orders Only</span>
                     </div>
                 )}
                 {/* All Orders Section (If filtered) */}
                 {selectedFilters.show === 'All' && (
                     <div className="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 text-blue-800 dark:text-blue-200 p-3 rounded-md mb-4 flex items-center">
-                        <LayoutGrid size={20} className="mr-2 text-blue-600 dark:text-blue-400" />
+                        {LayoutGridIcon && <LayoutGridIcon size={20} className="mr-2 text-blue-600 dark:text-blue-400" />}
                         <span className="font-medium">Showing All Orders</span>
                     </div>
                 )}
@@ -441,9 +480,9 @@ const OrderListScreen = ({ onBackToDashboard, initialFilter = 'All', toggleDarkM
                                                 <span className="text-xs font-semibold px-2 py-1 rounded-full bg-red-100 dark:bg-red-800 text-red-700 dark:text-red-200">Priority</span>
                                             )}
                                             {expandedOrderId === order.id ? (
-                                                <ChevronUp size={20} className="text-gray-500 dark:text-gray-400" />
+                                                <ChevronUpIcon size={20} className="text-gray-500 dark:text-gray-400" />
                                             ) : (
-                                                <ChevronDown size={20} className="text-gray-500 dark:text-gray-400" />
+                                                <ChevronDownIcon size={20} className="text-gray-500 dark:text-gray-400" />
                                             )}
                                         </div>
                                     </div>
@@ -473,13 +512,13 @@ const OrderListScreen = ({ onBackToDashboard, initialFilter = 'All', toggleDarkM
                                                 onClick={() => handleOpenOrder(order.id)}
                                                 className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-md text-sm font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200 active:scale-95 flex items-center"
                                             >
-                                                <Eye size={16} className="mr-1" /> Open
+                                                {EyeIcon && <EyeIcon size={16} className="mr-1" />} Open
                                             </button>
                                             <button
                                                 onClick={() => handleClaimOrder(order.id)}
                                                 className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 active:scale-95 flex items-center"
                                             >
-                                                <CheckCircle size={16} className="mr-1" /> Claim
+                                                {CheckCircleIcon && <CheckCircleIcon size={16} className="mr-1" />} Claim
                                             </button>
                                         </div>
                                     </div>
@@ -496,19 +535,19 @@ const OrderListScreen = ({ onBackToDashboard, initialFilter = 'All', toggleDarkM
             <footer className="bg-white dark:bg-gray-800 shadow-lg p-3 fixed bottom-0 left-0 right-0 z-20 border-t border-gray-200 dark:border-gray-700">
                 <nav className="flex justify-around items-center">
                     <a href="#" className="flex flex-col items-center text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 active:scale-95">
-                        <LayoutGrid size={24} />
+                        {LayoutGridIcon && <LayoutGridIcon size={24} />}
                         <span className="text-xs mt-1">Orders</span>
                     </a>
                     <a href="#" className="flex flex-col items-center text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 active:scale-95">
-                        <Ship size={24} />
+                        {ShipIcon && <ShipIcon size={24} />} {/* Corrected usage */}
                         <span className="text-xs mt-1">Ship</span>
                     </a>
                     <a href="#" className="flex flex-col items-center text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 active:scale-95">
-                        <Box size={24} />
+                        {BoxIcon && <BoxIcon size={24} />} {/* Corrected usage */}
                         <span className="text-xs mt-1">Unload</span>
                     </a>
                     <a href="#" className="flex flex-col items-center text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 active:scale-95">
-                        <Search size={24} />
+                        {SearchIcon && <SearchIcon size={24} />}
                         <span className="text-xs mt-1">Lookup</span>
                     </a>
                 </nav>
@@ -538,12 +577,20 @@ const TransferScreen = ({ onBackToDashboard, orders, toggleDarkMode, isDarkMode 
         setExpandedTripId(expandedTripId === tripId ? null : tripId);
     };
 
+    const HomeIcon = getIconComponent('Home');
+    const SunIcon = getIconComponent('Sun');
+    const MoonIcon = getIconComponent('Moon');
+    const CarIcon = getIconComponent('Car');
+    const ChevronUpIcon = getIconComponent('ChevronUp'); // Declared here
+    const ChevronDownIcon = getIconComponent('ChevronDown'); // Declared here
+
+
     return (
         <div className="min-h-screen bg-gray-100 dark:bg-gray-900 font-sans flex flex-col antialiased text-gray-800 dark:text-gray-200">
             {/* Header for Transfer Screen */}
             <header className="bg-blue-600 dark:bg-blue-900 text-white p-4 flex items-center justify-between shadow-md">
                 <button onClick={onBackToDashboard} className="text-white focus:outline-none focus:ring-2 focus:ring-white rounded-md p-1 transition-transform duration-200 active:scale-95">
-                    <Home size={24} />
+                    {HomeIcon && <HomeIcon size={24} />}
                 </button>
                 <h1 className="text-xl font-semibold">Transfer (Trip Groups)</h1>
                 {/* Dark Mode Toggle */}
@@ -551,7 +598,7 @@ const TransferScreen = ({ onBackToDashboard, orders, toggleDarkMode, isDarkMode 
                     onClick={toggleDarkMode}
                     className="ml-auto text-white focus:outline-none focus:ring-2 focus:ring-white rounded-md p-1 transition-transform duration-200 active:scale-95"
                 >
-                    {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
+                    {isDarkMode ? (SunIcon && <SunIcon size={24} />) : (MoonIcon && <MoonIcon size={24} />)}
                 </button>
             </header>
 
@@ -562,7 +609,7 @@ const TransferScreen = ({ onBackToDashboard, orders, toggleDarkMode, isDarkMode 
                             <div key={tripId} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 border border-gray-200 dark:border-gray-700">
                                 <div onClick={() => toggleTripDetails(tripId)} className="cursor-pointer flex items-center justify-between">
                                     <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 flex items-center">
-                                        <Car size={24} className="mr-2 text-blue-600 dark:text-blue-400" />
+                                        {CarIcon && <CarIcon size={24} className="mr-2 text-blue-600 dark:text-blue-400" />}
                                         Trip: {tripId}
                                     </h2>
                                     <div className="flex items-center space-x-2">
@@ -570,9 +617,9 @@ const TransferScreen = ({ onBackToDashboard, orders, toggleDarkMode, isDarkMode 
                                             {trips[tripId].length} Orders
                                         </span>
                                         {expandedTripId === tripId ? (
-                                            <ChevronUp size={20} className="text-gray-500 dark:text-gray-400" />
+                                            ChevronUpIcon && <ChevronUpIcon size={20} className="text-gray-500 dark:text-gray-400" />
                                         ) : (
-                                            <ChevronDown size={20} className="text-gray-500 dark:text-gray-400" />
+                                            ChevronDownIcon && <ChevronDownIcon size={20} className="text-gray-500 dark:text-gray-400" />
                                         )}
                                     </div>
                                 </div>
@@ -612,37 +659,42 @@ const DashboardScreen = ({ onNavigate, orders, toggleDarkMode, isDarkMode }) => 
     const tripGroupsCount = uniqueTripIds.size;
 
     const dashboardItems = [
-        { name: 'Lookup', icon: Search, targetScreen: { name: 'orders', filter: 'All' } },
-        { name: 'Transfer', icon: ArrowRightLeft, targetScreen: 'transfer', counter: tripGroupsCount }, // Counter for Transfer
-        { name: 'Shipping (Deliveries)', icon: Ship, targetScreen: 'ship', counter: deliveryOrdersCount },
-        { name: 'Picking (CPU)', icon: Package, targetScreen: 'picking', counter: nonDeliveryOrdersCount },
-        { name: 'Packing', icon: Archive, targetScreen: 'packing' },
-        { name: 'Restaging', icon: RefreshCcw, targetScreen: 'http://10.0.1.44/Fulfillment/RestagePage.html' },
-        { name: 'Receiving', icon: Download, targetScreen: 'http://10.0.1.44/Receiving/PurchaseReceiving.aspx#/' },
-        { name: 'Quality Control', icon: CheckSquare, targetScreen: 'quality_control' },
+        { name: 'Lookup', icon: 'Search', targetScreen: { name: 'orders', filter: 'All' } },
+        { name: 'Transfer', icon: 'ArrowRightLeft', targetScreen: 'transfer', counter: tripGroupsCount }, // Counter for Transfer
+        { name: 'Shipping (Deliveries)', icon: 'Ship', targetScreen: 'ship', counter: deliveryOrdersCount },
+        { name: 'Picking (CPU)', icon: 'Package', targetScreen: 'picking', counter: nonDeliveryOrdersCount },
+        { name: 'Packing', icon: 'Archive', targetScreen: 'packing' },
+        { name: 'Restaging', icon: 'RefreshCcw', targetScreen: 'http://10.0.1.44/Fulfillment/RestagePage.html' },
+        { name: 'Receiving', icon: 'Download', targetScreen: 'http://10.0.1.44/Receiving/PurchaseReceiving.aspx#/' },
+        { name: 'Quality Control', icon: 'CheckSquare', targetScreen: 'quality_control' },
     ];
 
     const wideDashboardItems = [
         {
             name: 'Order Dashboard',
-            icon: LayoutGrid,
+            icon: 'LayoutGrid',
             targetScreen: { name: 'orders', filter: 'All' },
             counter: totalOrdersCount
         },
         {
             name: 'Priority Orders',
-            icon: Clock,
+            icon: 'Clock',
             targetScreen: { name: 'orders', filter: 'Priority' },
             counter: priorityOrdersCount
         },
     ];
+
+    const MenuIcon = getIconComponent('Menu');
+    const SunIcon = getIconComponent('Sun');
+    const MoonIcon = getIconComponent('Moon');
+
 
     return (
         <div className="min-h-screen bg-gray-100 dark:bg-gray-900 font-sans flex flex-col antialiased text-gray-800 dark:text-gray-200">
             {/* Header for Dashboard Screen */}
             <header className="bg-blue-600 dark:bg-blue-900 text-white p-4 flex items-center justify-between shadow-md">
                 <button className="text-white focus:outline-none focus:ring-2 focus:ring-white rounded-md p-1 transition-transform duration-200 active:scale-95">
-                    <Menu size={24} />
+                    {MenuIcon && <MenuIcon size={24} />}
                 </button>
                 <h1 className="text-xl font-semibold">Paradigm</h1>
                 {/* Dark Mode Toggle */}
@@ -650,7 +702,7 @@ const DashboardScreen = ({ onNavigate, orders, toggleDarkMode, isDarkMode }) => 
                     onClick={toggleDarkMode}
                     className="ml-auto text-white focus:outline-none focus:ring-2 focus:ring-white rounded-md p-1 transition-transform duration-200 active:scale-95"
                 >
-                    {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
+                    {isDarkMode ? (SunIcon && <SunIcon size={24} />) : (MoonIcon && <MoonIcon size={24} />)}
                 </button>
             </header>
 
@@ -659,40 +711,46 @@ const DashboardScreen = ({ onNavigate, orders, toggleDarkMode, isDarkMode }) => 
                 <div className="max-w-4xl mx-auto">
                     {/* Wide buttons section */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
-                        {wideDashboardItems.map((item) => (
-                            <button
-                                key={item.name}
-                                onClick={() => onNavigate(item.targetScreen)}
-                                className="relative flex flex-col items-center justify-center bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-600 hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-full"
-                            >
-                                <item.icon size={48} className="text-green-600 dark:text-green-400 mb-3" />
-                                <span className="text-md font-semibold text-gray-800 dark:text-gray-200">{item.name}</span>
-                                {item.counter !== undefined && (
-                                    <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                                        {item.counter}
-                                    </span>
-                                )}
-                            </button>
-                        ))}
+                        {wideDashboardItems.map((item) => {
+                            const IconComponent = getIconComponent(item.icon);
+                            return (
+                                <button
+                                    key={item.name}
+                                    onClick={() => onNavigate(item.targetScreen)}
+                                    className="relative flex flex-col items-center justify-center bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-600 hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-full"
+                                >
+                                    {IconComponent && <IconComponent size={48} className="text-green-600 dark:text-green-400 mb-3" />}
+                                    <span className="text-md font-semibold text-gray-800 dark:text-gray-200">{item.name}</span>
+                                    {item.counter !== undefined && (
+                                        <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                                            {item.counter}
+                                        </span>
+                                    )}
+                                </button>
+                            );
+                        })}
                     </div>
 
                     {/* Original smaller buttons section */}
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 p-4">
-                        {dashboardItems.map((item) => (
-                            <button
-                                key={item.name}
-                                onClick={() => onNavigate(item.targetScreen)}
-                                className="relative flex flex-col items-center justify-center bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-600 hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                            >
-                                <item.icon size={48} className="text-green-600 dark:text-green-400 mb-3" />
-                                <span className="text-md font-semibold text-gray-800 dark:text-gray-200">{item.name}</span>
-                                {item.counter !== undefined && (
-                                    <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                                        {item.counter}
-                                    </span>
-                                )}
-                            </button>
-                        ))}
+                        {dashboardItems.map((item) => {
+                            const IconComponent = getIconComponent(item.icon);
+                            return (
+                                <button
+                                    key={item.name}
+                                    onClick={() => onNavigate(item.targetScreen)}
+                                    className="relative flex flex-col items-center justify-center bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-600 hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                >
+                                    {IconComponent && <IconComponent size={48} className="text-green-600 dark:text-green-400 mb-3" />}
+                                    <span className="text-md font-semibold text-gray-800 dark:text-gray-200">{item.name}</span>
+                                    {item.counter !== undefined && (
+                                        <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                                            {item.counter}
+                                        </span>
+                                    )}
+                                </button>
+                            );
+                        })}
                     </div>
                 </div>
             </main>
