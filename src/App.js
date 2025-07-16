@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
     Search, Sliders, Menu, ChevronDown, ChevronUp, X, Bell, User, LayoutGrid, Ship, Box, Eye, CheckCircle, Clock,
     Truck, ClipboardCheck, ScrollText, Users, Home, Warehouse, ArrowRightLeft, Package, Archive, RefreshCcw, Download, CheckSquare,
-    Sun, Moon // New icons for dark mode toggle
+    Sun, Moon, Car // New icons for dark mode toggle
 } from 'lucide-react';
 
 // Mock data to simulate orders
@@ -103,7 +103,6 @@ const mockOrders = [
         loadTime: '11AM',
         truck: 'Truck F',
         status: 'Completed',
-        weight: 11,
         priority: false,
         type: 'Trim'
     },
@@ -506,6 +505,88 @@ const OrderListScreen = ({ onBackToDashboard, initialFilter = 'All', toggleDarkM
     );
 };
 
+// TransferScreen Component - Displays trip groups
+const TransferScreen = ({ onBackToDashboard, orders, toggleDarkMode, isDarkMode }) => {
+    const [expandedTripId, setExpandedTripId] = useState(null);
+
+    // Group orders by tripId, only including orders that have a tripId
+    const trips = orders.reduce((acc, order) => {
+        if (order.tripId) { // Ensure the order has a tripId to be considered for a "transfer" trip
+            if (!acc[order.tripId]) {
+                acc[order.tripId] = [];
+            }
+            acc[order.tripId].push(order);
+        }
+        return acc;
+    }, {});
+
+    const sortedTripIds = Object.keys(trips).sort();
+
+    const toggleTripDetails = (tripId) => {
+        setExpandedTripId(expandedTripId === tripId ? null : tripId);
+    };
+
+    return (
+        <div className="min-h-screen bg-gray-100 dark:bg-gray-900 font-sans flex flex-col antialiased text-gray-800 dark:text-gray-200">
+            {/* Header for Transfer Screen */}
+            <header className="bg-blue-600 dark:bg-blue-900 text-white p-4 flex items-center justify-between shadow-md">
+                <button onClick={onBackToDashboard} className="text-white focus:outline-none focus:ring-2 focus:ring-white rounded-md p-1 transition-transform duration-200 active:scale-95">
+                    <Home size={24} />
+                </button>
+                <h1 className="text-xl font-semibold">Transfer (Trip Groups)</h1>
+                {/* Dark Mode Toggle */}
+                <button
+                    onClick={toggleDarkMode}
+                    className="ml-auto text-white focus:outline-none focus:ring-2 focus:ring-white rounded-md p-1 transition-transform duration-200 active:scale-95"
+                >
+                    {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
+                </button>
+            </header>
+
+            <main className="flex-1 p-4 pb-16 overflow-y-auto">
+                {sortedTripIds.length > 0 ? (
+                    <div className="space-y-4">
+                        {sortedTripIds.map(tripId => (
+                            <div key={tripId} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 border border-gray-200 dark:border-gray-700">
+                                <div onClick={() => toggleTripDetails(tripId)} className="cursor-pointer flex items-center justify-between">
+                                    <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 flex items-center">
+                                        <Car size={24} className="mr-2 text-blue-600 dark:text-blue-400" />
+                                        Trip: {tripId}
+                                    </h2>
+                                    <div className="flex items-center space-x-2">
+                                        <span className="bg-blue-100 dark:bg-blue-700 text-blue-800 dark:text-blue-100 text-sm font-semibold px-2.5 py-0.5 rounded-full">
+                                            {trips[tripId].length} Orders
+                                        </span>
+                                        {expandedTripId === tripId ? (
+                                            <ChevronUp size={20} className="text-gray-500 dark:text-gray-400" />
+                                        ) : (
+                                            <ChevronDown size={20} className="text-gray-500 dark:text-gray-400" />
+                                        )}
+                                    </div>
+                                </div>
+                                {expandedTripId === tripId && (
+                                    <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 space-y-3 animate-fadeIn">
+                                        <h3 className="font-semibold text-gray-700 dark:text-gray-300 mb-2">Orders in this Trip:</h3>
+                                        {trips[tripId].map(order => (
+                                            <div key={order.id} className="bg-gray-50 dark:bg-gray-700 p-3 rounded-md border border-gray-100 dark:border-gray-600 text-sm text-gray-700 dark:text-gray-300">
+                                                <p className="font-medium">{order.id} - {order.billTo}</p>
+                                                <p className="text-xs text-gray-500 dark:text-gray-400">Ship Via: {order.shipVia} | Status: {order.status}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="text-center text-gray-500 dark:text-gray-400 mt-10">No trip groups found.</div>
+                )}
+            </main>
+        </div>
+    );
+};
+
+
 // DashboardScreen Component - Displays a grid of main navigation items
 const DashboardScreen = ({ onNavigate, orders, toggleDarkMode, isDarkMode }) => { // Added dark mode props
     const priorityOrdersCount = orders.filter(order => order.priority).length;
@@ -628,7 +709,6 @@ const App = () => {
 
     // Function to navigate to a specific screen
     const navigateTo = (screenInfo) => {
-        // Check if screenInfo is a string and looks like a URL
         if (typeof screenInfo === 'string' && (screenInfo.startsWith('http://') || screenInfo.startsWith('https://'))) {
             window.location.href = screenInfo; // Navigate to external URL
         } else if (typeof screenInfo === 'string') { // For simple screen name (like 'transfer', 'ship')
