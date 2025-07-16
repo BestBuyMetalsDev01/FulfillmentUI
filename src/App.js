@@ -521,9 +521,9 @@ const OrderListScreen = ({ onBackToDashboard, initialFilter = 'All', toggleDarkM
 const TransferScreen = ({ onBackToDashboard, orders, toggleDarkMode, isDarkMode }) => {
     const [expandedTripId, setExpandedTripId] = useState(null);
 
-    // Group orders by tripId
+    // Group orders by tripId, only including orders that have a tripId
     const trips = orders.reduce((acc, order) => {
-        if (order.tripId) {
+        if (order.tripId) { // Ensure the order has a tripId to be considered for a "transfer" trip
             if (!acc[order.tripId]) {
                 acc[order.tripId] = [];
             }
@@ -607,7 +607,8 @@ const DashboardScreen = ({ onNavigate, orders, toggleDarkMode, isDarkMode }) => 
     const deliveryOrdersCount = orders.filter(order => order.shipVia === 'Delivery').length;
 
     // Calculate unique trip groups count
-    const uniqueTripIds = new Set(orders.map(order => order.tripId).filter(Boolean));
+    // This now explicitly only counts trips for orders that have a tripId
+    const uniqueTripIds = new Set(orders.filter(order => order.tripId).map(order => order.tripId));
     const tripGroupsCount = uniqueTripIds.size;
 
     const dashboardItems = [
@@ -717,7 +718,6 @@ const App = () => {
         }
     }, []);
 
-
     const navigateTo = (screenInfo) => {
         if (typeof screenInfo === 'string' && (screenInfo.startsWith('http://') || screenInfo.startsWith('https://'))) {
             window.location.href = screenInfo;
@@ -728,57 +728,59 @@ const App = () => {
         }
     };
 
+    // Centralized rendering logic for screens
+    const renderScreen = () => {
+        switch (currentScreen.name) {
+            case 'dashboard':
+                return (
+                    <DashboardScreen
+                        onNavigate={navigateTo}
+                        orders={allOrders}
+                        toggleDarkMode={toggleDarkMode}
+                        isDarkMode={isDarkMode}
+                    />
+                );
+            case 'orders':
+                return (
+                    <OrderListScreen
+                        onBackToDashboard={() => navigateTo('dashboard')}
+                        initialFilter={currentScreen.filter}
+                        orders={allOrders}
+                        toggleDarkMode={toggleDarkMode}
+                        isDarkMode={isDarkMode}
+                    />
+                );
+            case 'transfer':
+                return (
+                    <TransferScreen
+                        onBackToDashboard={() => navigateTo('dashboard')}
+                        orders={allOrders}
+                        toggleDarkMode={toggleDarkMode}
+                        isDarkMode={isDarkMode}
+                    />
+                );
+            // Add cases for other screens here (e.g., 'picking', 'packing', etc.)
+            default:
+                return (
+                    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center text-gray-800 dark:text-gray-200">
+                        <div className="text-center p-4">
+                            <h2 className="text-2xl font-bold">Coming Soon!</h2>
+                            <p className="mt-2">The '{currentScreen.name}' screen is under development.</p>
+                            <button
+                                onClick={() => navigateTo('dashboard')}
+                                className="mt-6 px-6 py-3 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200"
+                            >
+                                Back to Dashboard
+                            </button>
+                        </div>
+                    </div>
+                );
+        }
+    };
+
     return (
         <div className={isDarkMode ? 'dark' : ''}>
-            {currentScreen.name === 'dashboard' && (
-                <DashboardScreen
-                    onNavigate={navigateTo}
-                    orders={allOrders}
-                    toggleDarkMode={toggleDarkMode}
-                    isDarkMode={isDarkMode}
-                />
-            )}
-            {currentScreen.name === 'orders' && (
-                <OrderListScreen
-                    onBackToDashboard={() => navigateTo('dashboard')}
-                    initialFilter={currentScreen.filter}
-                    orders={allOrders}
-                    toggleDarkMode={toggleDarkMode}
-                    isDarkMode={isDarkMode}
-                />
-            )}
-            {currentScreen.name === 'transfer' && ( // New routing for TransferScreen
-                <TransferScreen
-                    onBackToDashboard={() => navigateTo('dashboard')}
-                    orders={allOrders}
-                    toggleDarkMode={toggleDarkMode}
-                    isDarkMode={isDarkMode}
-                />
-            )}
-            {/* Add more screens here for other dashboard items */}
-            {currentScreen.name !== 'dashboard' && currentScreen.name !== 'orders' && currentScreen.name !== 'transfer' && (
-                <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center text-gray-800 dark:text-gray-200">
-                    <div className="text-center p-4">
-                        <h2 className="text-2xl font-bold">Coming Soon!</h2>
-                        <p className="mt-2">The '{currentScreen.name}' screen is under development.</p>
-                        <button
-                            onClick={() => navigateTo('dashboard')}
-                            className="mt-6 px-6 py-3 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200"
-                        >
-                            Back to Dashboard
-                        </button>
-                    </div>
-                </div>
-            )}
-
-            {/* Global Tailwind CSS styles (moved from App component) */}
-            {/* These styles should be in your main CSS file (e.g., src/index.css) */}
-            {/* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'); */}
-            {/* body { font-family: 'Inter', sans-serif; } */}
-            {/* @keyframes slideUpFromBottom { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } } */}
-            {/* .animate-slideUpFromBottom { animation: slideUpFromBottom 0.3s ease-out forwards; } */}
-            {/* @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } */}
-            {/* .animate-fadeIn { animation: fadeIn 0.4s ease-out forwards; } */}
+            {renderScreen()}
         </div>
     );
 };
