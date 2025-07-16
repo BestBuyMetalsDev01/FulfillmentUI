@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/FulfillmentProUISuggestion/static/css/main.861977bc.css",
-    "main.js": "/FulfillmentProUISuggestion/static/js/main.aac67a85.js",
-    "static/js/453.34cba3e6.chunk.js": "/FulfillmentProUISuggestion/static/js/453.34cba3e6.chunk.js",
-    "index.html": "/FulfillmentProUISuggestion/index.html",
-    "main.861977bc.css.map": "/FulfillmentProUISuggestion/static/css/main.861977bc.css.map",
-    "main.aac67a85.js.map": "/FulfillmentProUISuggestion/static/js/main.aac67a85.js.map",
-    "453.34cba3e6.chunk.js.map": "/FulfillmentProUISuggestion/static/js/453.34cba3e6.chunk.js.map"
+    "main.css": "/FulfillmentUI/static/css/main.569198a1.css",
+    "main.js": "/FulfillmentUI/static/js/main.76ba02a0.js",
+    "static/js/453.34cba3e6.chunk.js": "/FulfillmentUI/static/js/453.34cba3e6.chunk.js",
+    "index.html": "/FulfillmentUI/index.html",
+    "main.569198a1.css.map": "/FulfillmentUI/static/css/main.569198a1.css.map",
+    "main.76ba02a0.js.map": "/FulfillmentUI/static/js/main.76ba02a0.js.map",
+    "453.34cba3e6.chunk.js.map": "/FulfillmentUI/static/js/453.34cba3e6.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.861977bc.css",
-    "static/js/main.aac67a85.js"
+    "static/css/main.569198a1.css",
+    "static/js/main.76ba02a0.js"
   ]
 }
